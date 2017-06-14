@@ -39,7 +39,7 @@
 
 // sensor commands
 #define SI70_ADDRESS    (0x40 << 1)
-#define SI70_MEASURE    0xE3    // measure temperature, hold master mode
+#define SI70_MEASURE    0xF3    // WG was E3 before// measure temperature, hold master mode
 #define SI70_RESET      0xFE    // reset
 #define SI70_WRITE_UR   0xE6    // write user register 1
 #define SI70_READ_UR    0xE7    // read user register 1

@@ -46,6 +46,7 @@ SI7050::SI7050(PinName sda, PinName scl, char slave_adr)
     /* nothing to do */
 }
 
+
 SI7050::SI7050(I2C &i2c_obj, char slave_adr)
     :
     i2c_p(NULL), 
@@ -61,7 +62,7 @@ SI7050::~SI7050()
     if (NULL != i2c_p)
         delete  i2c_p;
 }
-    
+
 int SI7050::reset()
 {
     char cmd[1];
@@ -102,7 +103,10 @@ int SI7050::measureTemperature(char *data)
     }
 
     cmd[0] = SI70_MEASURE; // measure temperature
-    ret = i2c.write(address, cmd, 1, 1);
+    ret = i2c.write(address, cmd, 1, 0); // WG last 0 was a 1
+    // WG small delay
+    wait_ms(11);
+
     ret |= i2c.read(address, data, 2, 0);
 
     if(ret){
@@ -119,7 +123,7 @@ int SI7050::calcTemperature(const char *data)
 
     temp_raw = (data[0] << 8) | (data[1]); 
     temp_c = ((17572 * (temp_raw))>>16) -4685;
- 
+
     return (int)(temp_c);
 }
 
@@ -133,7 +137,7 @@ int SI7050::getTemperature()
         return (ret_);
     }
     ret = calcTemperature(data);
-    
+
     return (ret);    
 }
 
