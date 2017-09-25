@@ -1,0 +1,6 @@
+mbed-os/features/net/*
+mbed-os/uvisor-mbed-lib/*
+mbed-os/features/mbedtls/*
+
+cmake-build/*
+cmake-*

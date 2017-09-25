@@ -6,25 +6,22 @@
  * @date    31 May 2017
  * @brief   This file contains the class of a SI7050 temperature sensor library with I2C interface
  ******************************************************************************
- * @attention
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Copyright 2017 ubirch GmbH (https://ubirch.com)
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * ```
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ```
  */
  
 /**
@@ -62,9 +59,9 @@
 #define ERROR_RESET             (0x0001 << 0) //(1)error during reset
 #define ERROR_INIT_WRITE        (0x0001 << 1) //(2)error during init set cmd
 #define ERROR_INIT_READ         (0x0001 << 2) //(4)error during init read user register
-#define ERROR_INIT_WRITE_BACK   (0x0001 << 3) //(8)error during init write back user register 
+#define ERROR_INIT_WRITE_BACK   (0x0001 << 3) //(8)error during init write back user register
 #define ERROR_MEAS_START        (0x0001 << 4) //(16,10h)error during measurement start 
-#define ERROR_MEAS_READ         (0x0001 << 5) //(32,20h)error during measurement read 
+#define ERROR_MEAS_READ         (0x0001 << 5) //(32,20h)error during measurement read
 
 
 /**  Interface for controlling SI7050 Sensor
@@ -106,7 +103,7 @@ public:
      * @param scl I2C-bus SCL pin
      * @param slave_adr (option) I2C-bus address (default: 0x40)
      */
-    SI7050(PinName sda, PinName sck, char slave_adr = SI70_ADDRESS);
+    SI7050(PinName sda, PinName sck, char slave_adr = (char) SI70_ADDRESS);
 
 
     /** Create a SI7050 instance
@@ -115,7 +112,7 @@ public:
      * @param i2c_obj I2C object (instance)
      * @param slave_adr (option) I2C-bus address (default: 0x40)
      */
-    SI7050(I2C &i2c_obj, char slave_adr = SI70_ADDRESS);
+    explicit SI7050(I2C &i2c_obj, char slave_adr = (char) SI70_ADDRESS);
 
 
     /** Destructor of SI7050
@@ -130,7 +127,7 @@ public:
      *  @note       after resetting the sensor, a minimum time of 15 ms has to
      *              be waited, before the sensor will communicate again
      */
-    int reset(void);
+    int reset();
 
 
     /** Initialize SI7050 sensor
@@ -139,7 +136,7 @@ public:
      *
      *  @return         (0) if no error, none (0) if error
      */
-    int initialize(void);
+    int initialize();
 
 
     /** Get the current temperature value from SI7050 sensor
@@ -150,7 +147,7 @@ public:
      *  @return         temperature value in 0.01°C resolution, or
      *                  (-32768) if error 
      */
-    int getTemperature(void);
+    int getTemperature();
 
 
     /** Calculate the Temperature value from the raw sensor data
@@ -181,7 +178,7 @@ public:
      *                                      0x20 = version 2.0
      *                  (-1) if error
      */
-    int getFirmwareVersion(void);
+    int getFirmwareVersion();
 
 
     /** Get the Electronic ID of the sensor
@@ -199,7 +196,7 @@ public:
      *                                  55 = 0x37 = Si7055
      *                  (-1) if error
      */
-    int getID(void);
+    int getID();
 
 
     
