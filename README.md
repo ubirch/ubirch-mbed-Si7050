@@ -21,7 +21,16 @@ void main() {
 
 ## Testing
 
-Run `mbed test -n tests-si7050*` to run all local Si7050 tests.
+Testing requires the NRF52 Development Kit with an attached SI7050 sensor.
+
+Setup:
+```bash
+mbed new .
+mbed target NRF52_DK
+mbed toolchain GCC_ARM
+```
+
+Run `mbed test -n 'tests-si7050*'` to run all local Si7050 tests.
 
 ## License
 

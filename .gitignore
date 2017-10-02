@@ -59,3 +59,5 @@ fabric.properties
 
 mbed-os.lib
 mbed-os
+testmem.csv
+testresult.xml
