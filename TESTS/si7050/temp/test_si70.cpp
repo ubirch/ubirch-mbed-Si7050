@@ -26,13 +26,8 @@
 #include "unity/unity.h"
 #include "greentea-client/test_env.h"
 
-#if defined(TARGET_NRF52_DK)
-#define SI7050_SDA I2C_SDA0
-#define SI7050_SCL I2C_SCL0
-#else
-#define SI7050_SDA I2C_SDA
-#define SI7050_SCL I2C_SCL
-#endif
+#define SI7050_SDA p26
+#define SI7050_SCL p25
 
 using namespace utest::v1;
 
