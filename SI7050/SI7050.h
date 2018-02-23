@@ -198,6 +198,15 @@ public:
      */
     int getID();
 
+    /**
+     * Get the serial number of the sensor. The serial is stored in the
+     * argument.
+     *
+     * @param serial an 8 byte array for storing the serial number in
+     * @return 0 if successful
+     */
+    int getSerial(unsigned char serial[8]);
+
 
     
 private:

@@ -118,6 +118,7 @@ void TestSi_getID() {
     int ret;
     ret = sensor.getID();
     TEST_ASSERT_UNLESS_MESSAGE(ret == (-1), "failed to get the ID");
+    TEST_ASSERT_EQUAL_HEX8_MESSAGE(0x32, ret, "wrong sensor detected");
 }
 
 void TestSi_calculationRange() {

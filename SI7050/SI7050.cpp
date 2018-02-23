@@ -34,21 +34,21 @@
 #include "SI7050.h"
 
 SI7050::SI7050(PinName sda, PinName scl, char slave_adr)
-:
-i2c_p(new I2C(sda, scl)),
-i2c(*i2c_p),
-address(slave_adr),
-ret(0) {
+        :
+        i2c_p(new I2C(sda, scl)),
+        i2c(*i2c_p),
+        address(slave_adr),
+        ret(0) {
     /* nothing to do */
 }
 
 
 SI7050::SI7050(I2C &i2c_obj, char slave_adr)
-:
-i2c_p(NULL),
-i2c(i2c_obj),
-address(slave_adr),
-ret(0) {
+        :
+        i2c_p(NULL),
+        i2c(i2c_obj),
+        address(slave_adr),
+        ret(0) {
     /* nothing to do */
 }
 
@@ -150,9 +150,15 @@ int SI7050::getFirmwareVersion() {
 }
 
 int SI7050::getID() {
+    unsigned char serial[16];
+    int ret = getSerial(serial);
+    if(!ret) return serial[4];
+    return ret;
+}
+
+int SI7050::getSerial(unsigned char serial[8]) {
     char cmd[4];
     char data[16];
-    int ret_ = -1;
 
     // first access for the first 4 Bytes
     cmd[0] = static_cast<char>(SI70_READ_ID_11);
@@ -160,9 +166,12 @@ int SI7050::getID() {
 
     ret = i2c.write(address, cmd, 2, true);
     ret |= i2c.read(address, data, 8, false);
-    if (ret) {
-        return ret_;
-    }
+    if (ret) return -1;
+
+    serial[0] = (unsigned char) data[0];
+    serial[1] = (unsigned char) data[2];
+    serial[2] = (unsigned char) data[4];
+    serial[3] = (unsigned char) data[6];
 
     // second access for the last 4 Bytes
     cmd[2] = static_cast<char>(SI70_READ_ID_21);
@@ -170,14 +179,14 @@ int SI7050::getID() {
 
     ret = i2c.write(address, &cmd[2], 2, true);
     ret |= i2c.read(address, &data[8], 8, false);
-    if (ret) {
-        return ret_;
-    }
+    if (ret) return -1;
 
-    // get the sensor type out of the data
-    ret_ = (int) (data[8]);
+    serial[4] = (unsigned char) data[8];
+    serial[5] = (unsigned char) data[9];
+    serial[6] = (unsigned char) data[11];
+    serial[7] = (unsigned char) data[12];
 
-    return ret_;
+    return ret;
 }
 
 
