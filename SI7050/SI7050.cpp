@@ -186,8 +186,72 @@ int SI7050::getSerial(unsigned char serial[8]) {
     serial[6] = (unsigned char) data[11];
     serial[7] = (unsigned char) data[12];
 
+    /*
+     * check the CRC of the serial number
+     */
+//    if(!checkSerial((unsigned char*)(data)))
+//        return -1;
+
     return ret;
 }
+
+
+bool SI7050::checkSerial(unsigned char *serialRaw){
+    unsigned char crc;
+
+    crc = crc8(&serialRaw[0],1,0);
+    if(crc != serialRaw[1])
+        return false;
+
+    for (int i = 2; i < 8 ;) {
+        crc = crc8(&serialRaw[i],1, serialRaw[i-1]);
+        if(serialRaw[i+1] != crc)
+            return false;
+        i+=2;
+    }
+
+    crc = crc8(&serialRaw[8],2,0);
+    if(serialRaw[10] != crc)
+        return false;
+
+    for (int i = 11; i < 13 ;) {
+
+        crc = crc8(&serialRaw[i],2, serialRaw[i-1]);
+        if(serialRaw[i+2] != crc)
+            return false;
+        i+=3;
+    }
+
+    return true;
+}
+
+unsigned char SI7050::crc8(unsigned char *data, uint8_t len, unsigned char init){
+    unsigned char crc = bitswap(init);
+
+    for (int i=0; i<len;i++)
+    {
+        unsigned char inbyte = bitswap(data[i]);
+        for (uint8_t j=0;j<8;j++)
+        {
+            unsigned char mix = (crc ^ inbyte) & 0x01;
+            crc >>= 1;
+            if (mix)
+                crc ^= 0x8C;
+
+            inbyte >>= 1;
+        }
+    }
+    return bitswap(crc);
+}
+
+unsigned char SI7050::bitswap(unsigned char input){
+    unsigned char output = 0;
+    for (int k = 0; k < 8; k++) {
+        output |= ((input >> k) & 0x01) << (7 - k);
+    }
+    return output;
+}
+
 
 
 
