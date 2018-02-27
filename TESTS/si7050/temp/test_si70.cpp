@@ -167,6 +167,13 @@ void TestSi_checkSerialCRC(){
     TEST_ASSERT_MESSAGE(testSensor.checkSerial(testStr), "serial number CRC check failed");
 }
 
+void TestSi_checkWrongSerialCRC(){
+    testSi7050 testSensor(SI7050_SDA, SI7050_SCL);
+
+    unsigned char testStr[16] = {0x00, 0x00, 0x16, 0xe5, 0x4b, 0xe3, 0xe4, 0xf5, 0x32, 0xff, 0xc7, 0xff, 0xff, 0x29, 0xff, 0xff};
+    TEST_ASSERT_EQUAL_MESSAGE(false,testSensor.checkSerial(testStr), "serial number wrong CRC check failed");
+}
+
 
 utest::v1::status_t greentea_failure_handler(const Case *const source, const failure_t reason) {
     greentea_case_failure_abort_handler(source, reason);
@@ -184,6 +191,7 @@ Case("SI7050 get firmware version-0", TestSi_getFirmwareVersion, greentea_failur
 Case("SI7050 get ID-0", TestSi_getID, greentea_failure_handler),
 Case("SI7050 check calculation range min to max-0", TestSi_calculationRange, greentea_failure_handler),
 Case("SI7050 check CRC calculation for serial number-0", TestSi_checkSerialCRC, greentea_failure_handler),
+Case("SI7050 check wrong CRC calculation for serial number-0", TestSi_checkWrongSerialCRC, greentea_failure_handler),
 
 };
 
