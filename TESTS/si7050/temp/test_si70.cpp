@@ -118,6 +118,7 @@ void TestSi_getID() {
     int ret;
     ret = sensor.getID();
     TEST_ASSERT_UNLESS_MESSAGE(ret == (-1), "failed to get the ID");
+    TEST_ASSERT_EQUAL_HEX8_MESSAGE(0x32, ret, "wrong sensor detected");
 }
 
 void TestSi_calculationRange() {
@@ -137,6 +138,42 @@ void TestSi_calculationRange() {
     }
 }
 
+class testSi7050 : public SI7050 {
+public:
+    I2C         *i2c_p;
+    I2C         &i2c;
+    char        address;
+    int         ret;
+
+    testSi7050(PinName sda, PinName sck, char slave_adr = (char) SI70_ADDRESS)
+            :
+            SI7050(sda,sck),
+            i2c_p(new I2C(sda, sck)),
+            i2c(*i2c_p),
+            address(slave_adr),
+            ret(0) {
+
+    };
+
+    bool checkSerial(unsigned char* serialRaw){
+        return SI7050::checkSerial(serialRaw);
+    }
+};
+
+void TestSi_checkSerialCRC(){
+    testSi7050 testSensor(SI7050_SDA, SI7050_SCL);
+
+    unsigned char testStr[16] = {0x00, 0x00, 0x16, 0xe5, 0x4b, 0xe3, 0xe6, 0xf5, 0x32, 0xff, 0xc7, 0xff, 0xff, 0x29, 0xff, 0xff};
+    TEST_ASSERT_MESSAGE(testSensor.checkSerial(testStr), "serial number CRC check failed");
+}
+
+void TestSi_checkWrongSerialCRC(){
+    testSi7050 testSensor(SI7050_SDA, SI7050_SCL);
+
+    unsigned char testStr[16] = {0x00, 0x00, 0x16, 0xe5, 0x4b, 0xe3, 0xe4, 0xf5, 0x32, 0xff, 0xc7, 0xff, 0xff, 0x29, 0xff, 0xff};
+    TEST_ASSERT_EQUAL_MESSAGE(false,testSensor.checkSerial(testStr), "serial number wrong CRC check failed");
+}
+
 
 utest::v1::status_t greentea_failure_handler(const Case *const source, const failure_t reason) {
     greentea_case_failure_abort_handler(source, reason);
@@ -153,6 +190,9 @@ Case("SI7050 measure temperature-0", TestSi_measureTemperature, greentea_failure
 Case("SI7050 get firmware version-0", TestSi_getFirmwareVersion, greentea_failure_handler),
 Case("SI7050 get ID-0", TestSi_getID, greentea_failure_handler),
 Case("SI7050 check calculation range min to max-0", TestSi_calculationRange, greentea_failure_handler),
+Case("SI7050 check CRC calculation for serial number-0", TestSi_checkSerialCRC, greentea_failure_handler),
+Case("SI7050 check wrong CRC calculation for serial number-0", TestSi_checkWrongSerialCRC, greentea_failure_handler),
+
 };
 
 utest::v1::status_t greentea_test_setup(const size_t number_of_cases) {

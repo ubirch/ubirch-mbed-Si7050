@@ -62,3 +62,8 @@ mbed-os.lib
 mbed-os
 testmem.csv
 testresult.xml
+
+CMakeLists.txt
+GettingStarted.html
+mbed_config.h
+mbed_settings.py

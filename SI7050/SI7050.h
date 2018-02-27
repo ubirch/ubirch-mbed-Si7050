@@ -198,14 +198,53 @@ public:
      */
     int getID();
 
+    /**
+     * Get the serial number of the sensor. The serial is stored in the
+     * argument.
+     *
+     * @param serial an 8 byte array for storing the serial number in
+     * @return 0 if successful
+     */
+    int getSerial(unsigned char serial[8]);
 
-    
+protected:
+    /*!
+     * Check the serial number with CRC.
+     *
+     * @param serialRaw     Raw serial data, which includes the CRC
+     * @return              true if successful, else false
+     */
+    bool checkSerial(unsigned char* serialRaw);
+
 private:
 
     I2C         *i2c_p;
     I2C         &i2c;
     char        address;
     int         ret;
+
+
+    /*!
+     * Calculate the CRC8.
+     *
+     * @brief       the polynomial = x^8+x^5+x^4+1
+     *
+     * @param data  pointer to the data
+     * @param len   length of data
+     * @param init  CRC initilizer
+     * @return      calculated CRC
+     */
+    unsigned char crc8(unsigned char *data, uint8_t len, unsigned char init);
+
+    /*!
+     * Swap the bit order in single byte.
+     *
+     * @param input Byte to swap
+     * @return      swapped Byte
+     */
+    unsigned char bitswap(unsigned char input);
+
+
 };
 
 #endif // MBED_SI7050_H
